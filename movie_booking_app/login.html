@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Beyond The Screen</title>
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+
+    <header>
+    <div class="logo">
+      <img src="image/icon/bts logo.png" alt="logo" width="60" height="60">
+    </div>
+  </header>
+
+  <main class="auth-container">
+    <h1>Sign In</h1>
+    <form onsubmit="return loginUser(event)" class="auth-form">
+      <label>Email:</label>
+      <input type="email" id="loginEmail" required />
+
+      <label>Password:</label>
+      <input type="password" id="loginPassword" required />
+
+      <button type="submit">Login</button>
+      <p>Don't have an account? <a href="signup.html">Sign up here</a>.</p>
+    </form>
+  </main>
+
+<script>
+function loginUser(event) {
+  event.preventDefault();
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+
+  fetch('login.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  })
+  .then(res => res.json().then(body => ({ ok: res.ok, body })))
+  .then(({ ok, body }) => {
+    if (!ok) {
+      alert(body.error || 'Invalid email or password.');
+      return;
+    }
+    localStorage.setItem('loggedInUser', body.email);
+    alert('Login successful!');
+    window.location.href = 'index.html';
+  })
+  .catch(err => {
+    console.error(err);
+    alert('Network error');
+  });
+
+  return false;
+}
+</script>
+</body>
+</html>
